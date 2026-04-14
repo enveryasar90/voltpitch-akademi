@@ -6,6 +6,7 @@
     <title>Uçuş Dinamikleri | Voltpitch Akademi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -16,12 +17,15 @@
                               linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
         }
         input[type=range] { accent-color: #2563eb; }
+        /* Scrollbar Gizleme */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
 
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center">
                     <span class="font-extrabold text-2xl tracking-tight text-slate-900">
@@ -39,87 +43,131 @@
             </div>
         </div>
     </nav>
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex gap-8">
-        
-        <div class="flex-1 flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden relative">
-            <div class="bg-slate-100 border-b border-slate-200 px-4 py-3 flex justify-between items-center absolute w-full z-10">
-                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">3D Rüzgar Tüneli</h2>
-                <span class="flex items-center gap-2 text-xs font-mono text-green-600">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> MOTOR AKTİF
-                </span>
-            </div>
-            <div class="flex-1 bg-slate-50 bg-grid relative w-full h-full" id="canvas-container">
-            </div>
-        </div>
 
-        <div class="w-80 flex flex-col gap-6 shrink-0 relative z-10 overflow-y-auto pb-4">
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-6 overflow-hidden">
+        
+        <div class="w-96 flex flex-col gap-6 shrink-0 overflow-y-auto no-scrollbar">
             
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
                 <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider border-b border-slate-100 pb-3 mb-5">Kontrol Yüzeyleri</h2>
                 
-                <div class="mb-6">
+                <div class="mb-5">
                     <div class="flex justify-between text-xs font-semibold mb-2">
-                        <label class="text-slate-600">İrtifa Dümeni (Elevator)</label>
-                        <span class="text-slate-400">Yunuslama / Pitch</span>
+                        <label class="text-slate-600">Hücum Açısı (Pitch)</label>
+                        <span id="pitchLabel" class="text-blue-600">0°</span>
                     </div>
                     <input type="range" id="pitchSlider" min="-30" max="30" value="0" class="w-full">
                 </div>
 
-                <div class="mb-6">
+                <div class="mb-5">
                     <div class="flex justify-between text-xs font-semibold mb-2">
-                        <label class="text-slate-600">Kanatçık (Aileron)</label>
-                        <span class="text-slate-400">Yatış / Roll</span>
+                        <label class="text-slate-600">Yatış Açısı (Roll)</label>
+                        <span id="rollLabel" class="text-green-600">0°</span>
                     </div>
                     <input type="range" id="rollSlider" min="-30" max="30" value="0" class="w-full">
                 </div>
 
-                <div class="mb-6">
+                <div class="mb-5">
                     <div class="flex justify-between text-xs font-semibold mb-2">
-                        <label class="text-slate-600">İstikamet Dümeni (Rudder)</label>
-                        <span class="text-slate-400">Sapma / Yaw</span>
+                        <label class="text-slate-600">Sapma (Yaw)</label>
+                        <span id="yawLabel" class="text-yellow-600">0°</span>
                     </div>
                     <input type="range" id="yawSlider" min="-30" max="30" value="0" class="w-full">
                 </div>
 
                 <div>
                     <div class="flex justify-between text-xs font-semibold mb-2">
-                        <label class="text-slate-600">Motor Gücü (Thrust)</label>
-                        <span class="text-slate-400">%</span>
+                        <label class="text-slate-600">İtki Gücü (Thrust)</label>
+                        <span id="thrustLabel" class="text-red-600">0%</span>
                     </div>
                     <input type="range" id="thrustSlider" min="0" max="100" value="0" class="w-full">
                 </div>
             </div>
 
-            <div class="bg-slate-800 rounded-xl shadow-sm p-5 text-white">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Canlı Uçuş Verisi</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
-                        <p class="text-[10px] text-slate-400 mb-1">PITCH AÇISI</p>
-                        <p class="font-mono text-xl text-blue-400"><span id="pitchVal">0</span>°</p>
-                    </div>
-                    <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
-                        <p class="text-[10px] text-slate-400 mb-1">ROLL AÇISI</p>
-                        <p class="font-mono text-xl text-green-400"><span id="rollVal">0</span>°</p>
-                    </div>
-                    <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
-                        <p class="text-[10px] text-slate-400 mb-1">YAW AÇISI</p>
-                        <p class="font-mono text-xl text-yellow-400"><span id="yawVal">0</span>°</p>
-                    </div>
-                    <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
-                        <p class="text-[10px] text-slate-400 mb-1">GÜÇ</p>
-                        <p class="font-mono text-xl text-red-400"><span id="thrustVal">0</span>%</p>
-                    </div>
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Kuvvet Analizi</h2>
+                    <div id="stallWarning" class="hidden px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded animate-pulse">STALL!</div>
+                </div>
+                <div class="h-48">
+                    <canvas id="physicsChart"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-4 text-[10px] font-mono text-slate-500 border-t pt-3">
+                    <div>LIFT: <span id="liftVal" class="text-blue-600 font-bold">0</span> N</div>
+                    <div>DRAG: <span id="dragVal" class="text-red-600 font-bold">0</span> N</div>
                 </div>
             </div>
 
+            <div class="bg-slate-800 rounded-xl shadow-sm p-5 text-white">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900 p-2 rounded border border-slate-700">
+                        <p class="text-[9px] text-slate-500">HAVA HIZI</p>
+                        <p class="font-mono text-lg text-blue-400"><span id="speedVal">0</span> m/s</p>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-700">
+                        <p class="text-[9px] text-slate-500">YÜKLEME</p>
+                        <p class="font-mono text-lg text-green-400"><span id="gVal">1.0</span> G</p>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="flex-1 flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden relative">
+            <div class="bg-slate-100 border-b border-slate-200 px-4 py-3 flex justify-between items-center absolute w-full z-10">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">3D Rüzgar Tüneli Simülasyonu</h2>
+                <span class="flex items-center gap-2 text-xs font-mono text-green-600">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> TELEMETRİ BAĞLI
+                </span>
+            </div>
+            <div class="flex-1 bg-slate-50 bg-grid relative w-full h-full" id="canvas-container"></div>
+        </div>
+
     </main>
 
     <script>
-        // 1. SAHNE VE KAMERA KURULUMU
+        // --- 1. CHART KURULUMU (Kuvvet Analizi) ---
+        const ctx = document.getElementById('physicsChart').getContext('2d');
+        const physicsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array(30).fill(''),
+                datasets: [
+                    {
+                        label: 'Taşıma (Lift)',
+                        borderColor: '#3b82f6',
+                        backgroundColor: '#3b82f633',
+                        data: Array(30).fill(0),
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Sürüklenme (Drag)',
+                        borderColor: '#ef4444',
+                        data: Array(30).fill(0),
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 250, grid: { color: '#f1f5f9' }, ticks: { font: { size: 9 } } },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: true, labels: { boxWidth: 8, font: { size: 10 } } }
+                }
+            }
+        });
+
+        // --- 2. THREE.JS KURULUMU ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        // Kamerayı uçağa arkadan ve hafif çaprazdan bakacak şekilde yerleştiriyoruz
         const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
         camera.position.set(5, 4, 8); 
         camera.lookAt(0, 0, 0);
@@ -128,146 +176,153 @@
         renderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(renderer.domElement);
 
-        // Işıklar
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.position.set(10, 20, 10);
         scene.add(dirLight);
 
-        // Renk Materyalleri
-        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x1e3a8a }); // Koyu Mavi
-        const wingMat = new THREE.MeshPhongMaterial({ color: 0x3b82f6 }); // Açık Mavi
-        const controlSurfaceMat = new THREE.MeshPhongMaterial({ color: 0xf97316 }); // Turuncu (Fark edilsin diye)
-        const darkMat = new THREE.MeshPhongMaterial({ color: 0x333333 }); // Siyah/Gri
-
-        // 2. DETAYLI UÇAK MODELİ İNŞASI
+        // Uçak Parçaları
         const airplane = new THREE.Group();
+        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x1e3a8a });
+        const wingMat = new THREE.MeshPhongMaterial({ color: 0x3b82f6 });
+        const orangeMat = new THREE.MeshPhongMaterial({ color: 0xf97316 });
 
-        // Gövde (Fuselage)
         const fuselage = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 5), bodyMat);
         airplane.add(fuselage);
-
-        // Kokpit Camı
+        
         const cockpit = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 1), new THREE.MeshPhongMaterial({ color: 0x93c5fd }));
         cockpit.position.set(0, 0.7, 0.5);
         airplane.add(cockpit);
 
-        // --- KANATLAR VE KANATÇIKLAR (ROLL) ---
-        // Sol Kanat
-        const leftWing = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.1, 1.2), wingMat);
-        leftWing.position.set(2.25, 0, 0);
-        airplane.add(leftWing);
-        // Sol Kanatçık (Aileron)
-        const leftAileron = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.1, 0.4), controlSurfaceMat);
-        leftAileron.position.set(2.5, 0, -0.8);
-        airplane.add(leftAileron);
+        const wingG = new THREE.BoxGeometry(4.5, 0.1, 1.2);
+        const wing = new THREE.Mesh(wingG, wingMat);
+        airplane.add(wing);
 
-        // Sağ Kanat
-        const rightWing = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.1, 1.2), wingMat);
-        rightWing.position.set(-2.25, 0, 0);
-        airplane.add(rightWing);
-        // Sağ Kanatçık (Aileron)
-        const rightAileron = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.1, 0.4), controlSurfaceMat);
-        rightAileron.position.set(-2.5, 0, -0.8);
-        airplane.add(rightAileron);
+        const tailH = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 0.8), wingMat);
+        tailH.position.set(0, 0.2, -2.2);
+        airplane.add(tailH);
 
-        // --- KUYRUK VE DÜMENLER (PITCH & YAW) ---
-        // Yatay Stabilizatör
-        const hStab = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.1, 0.8), wingMat);
-        hStab.position.set(0, 0.2, -2.2);
-        airplane.add(hStab);
-        // İrtifa Dümenleri (Elevators)
-        const leftElevator = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 0.4), controlSurfaceMat);
-        leftElevator.position.set(0.6, 0.2, -2.8);
-        airplane.add(leftElevator);
-        const rightElevator = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 0.4), controlSurfaceMat);
-        rightElevator.position.set(-0.6, 0.2, -2.8);
-        airplane.add(rightElevator);
+        const tailV = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.2, 0.8), wingMat);
+        tailV.position.set(0, 0.8, -2.2);
+        airplane.add(tailV);
 
-        // Dikey Stabilizatör
-        const vStab = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.2, 1), wingMat);
-        vStab.position.set(0, 0.8, -2.1);
-        airplane.add(vStab);
-        // İstikamet Dümeni (Rudder)
-        const rudder = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.1, 0.5), controlSurfaceMat);
-        rudder.position.set(0, 0.85, -2.85);
-        airplane.add(rudder);
+        // Pervane
+        const propGroup = new THREE.Group();
+        propGroup.position.set(0, 0, 2.6);
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 0.1), orangeMat);
+        propGroup.add(blade);
+        airplane.add(propGroup);
 
-        // --- PERVANE (THRUST) ---
-        const propellerGroup = new THREE.Group();
-        propellerGroup.position.set(0, 0, 2.6); // Uçağın burnuna yerleştir
-
-        const propHub = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.4, 0.4, 8), darkMat);
-        propHub.rotation.x = Math.PI / 2;
-        propellerGroup.add(propHub);
-
-        const propBlade1 = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 0.1), darkMat);
-        propellerGroup.add(propBlade1);
-        const propBlade2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2, 0.1), darkMat);
-        propellerGroup.add(propBlade2);
-
-        airplane.add(propellerGroup);
         scene.add(airplane);
 
-        // 3. HTML ELEMENTLERİNİ SEÇME (Sliderlar ve Metinler)
-        const pitchSlider = document.getElementById('pitchSlider');
-        const rollSlider = document.getElementById('rollSlider');
-        const yawSlider = document.getElementById('yawSlider');
-        const thrustSlider = document.getElementById('thrustSlider');
+        // Rüzgar Çizgileri
+        const windCount = 150;
+        const windLines = new THREE.Group();
+        const windPositions = new Float32Array(windCount * 6);
+        const windGeometry = new THREE.BufferGeometry();
+        for(let i=0; i<windCount; i++) {
+            const x = (Math.random()-0.5)*15; const y = (Math.random()-0.5)*10; const z = (Math.random()-0.5)*20;
+            const idx = i*6;
+            windPositions[idx]=x; windPositions[idx+1]=y; windPositions[idx+2]=z;
+            windPositions[idx+3]=x; windPositions[idx+4]=y; windPositions[idx+5]=z+0.5;
+        }
+        windGeometry.setAttribute('position', new THREE.BufferAttribute(windPositions, 3));
+        const windMat = new THREE.LineBasicMaterial({ color: 0xcbd5e1, transparent: true, opacity: 0 });
+        const windSystem = new THREE.LineSegments(windGeometry, windMat);
+        scene.add(windSystem);
 
-        const pitchVal = document.getElementById('pitchVal');
-        const rollVal = document.getElementById('rollVal');
-        const yawVal = document.getElementById('yawVal');
-        const thrustVal = document.getElementById('thrustVal');
+        // --- 3. FİZİK VE DÖNGÜ ---
+        const sliders = {
+            pitch: document.getElementById('pitchSlider'),
+            roll: document.getElementById('rollSlider'),
+            yaw: document.getElementById('yawSlider'),
+            thrust: document.getElementById('thrustSlider')
+        };
 
-        // 4. ANİMASYON DÖNGÜSÜ (Her saniye 60 kare çalışır)
+        const labels = {
+            pitch: document.getElementById('pitchLabel'),
+            roll: document.getElementById('rollLabel'),
+            yaw: document.getElementById('yawLabel'),
+            thrust: document.getElementById('thrustLabel'),
+            speed: document.getElementById('speedVal'),
+            lift: document.getElementById('liftVal'),
+            drag: document.getElementById('dragVal'),
+            g: document.getElementById('gVal')
+        };
+
         function animate() {
             requestAnimationFrame(animate);
 
-            // Slider değerlerini al
-            const p = parseFloat(pitchSlider.value);
-            const r = parseFloat(rollSlider.value);
-            const y = parseFloat(yawSlider.value);
-            const t = parseFloat(thrustSlider.value);
+            const p = parseFloat(sliders.pitch.value);
+            const r = parseFloat(sliders.roll.value);
+            const y = parseFloat(sliders.yaw.value);
+            const t = parseFloat(sliders.thrust.value);
 
-            // Dijital ekranları güncelle
-            pitchVal.innerText = p;
-            rollVal.innerText = r;
-            yawVal.innerText = y;
-            thrustVal.innerText = t;
+            // UI Yazıları
+            labels.pitch.innerText = p + "°";
+            labels.roll.innerText = r + "°";
+            labels.yaw.innerText = y + "°";
+            labels.thrust.innerText = t + "%";
 
-            // Uçağın ana gövdesini döndür (Radyana çevirerek)
-            airplane.rotation.x = THREE.MathUtils.degToRad(p);
+            // Uçak Rotasyonu
+            airplane.rotation.x = THREE.MathUtils.degToRad(-p);
             airplane.rotation.z = THREE.MathUtils.degToRad(-r);
             airplane.rotation.y = THREE.MathUtils.degToRad(-y);
+            propGroup.rotation.z -= t * 0.005;
 
-            // KONTROL YÜZEYLERİNİ HAREKET ETTİR (Abartılı görünüm için açıyı biraz artırıyoruz)
-            // Pitch -> İrtifa dümenleri hareket eder
-            leftElevator.rotation.x = THREE.MathUtils.degToRad(-p * 1.5);
-            rightElevator.rotation.x = THREE.MathUtils.degToRad(-p * 1.5);
+            // Rüzgar Efekti
+            windMat.opacity = (t/100)*0.4;
+            const posArr = windSystem.geometry.attributes.position.array;
+            for(let i=0; i<windCount; i++) {
+                const idx = i*6;
+                posArr[idx+2] += (t*0.01);
+                posArr[idx+5] += (t*0.01);
+                if(posArr[idx+2] > 10) {
+                    posArr[idx+2] = -10; posArr[idx+5] = -9.5;
+                }
+            }
+            windSystem.geometry.attributes.position.needsUpdate = true;
 
-            // Roll -> Kanatçıklar ters yönlü hareket eder
-            leftAileron.rotation.x = THREE.MathUtils.degToRad(r * 1.5);
-            rightAileron.rotation.x = THREE.MathUtils.degToRad(-r * 1.5);
+            // --- AERODİNAMİK HESAPLAMA ---
+            const velocity = t * 0.8; // Hız Thrust'a bağlı
+            const alpha = p * (Math.PI / 180); // Radyan cinsinden hücum açısı
+            
+            // Basit Lift Formülü: L = 0.5 * rho * v^2 * CL
+            // CL açıyla lineer artar ama 18 dereceden sonra düşer (Stall)
+            let CL = 2 * Math.PI * alpha;
+            const stallWarning = document.getElementById('stallWarning');
+            if(p > 18) {
+                CL *= 0.5; // Taşıma kaybı
+                stallWarning.classList.remove('hidden');
+            } else {
+                stallWarning.classList.add('hidden');
+            }
 
-            // Yaw -> İstikamet dümeni hareket eder
-            rudder.rotation.y = THREE.MathUtils.degToRad(-y * 1.5);
+            const lift = Math.max(0, 0.5 * (velocity**2) * CL * 0.1);
+            const drag = (0.5 * (velocity**2) * 0.05) + (lift * 0.2); // Profil Drag + İndüklenmiş Drag
 
-            // Thrust -> Pervaneyi döndür
-            propellerGroup.rotation.z -= (t * 0.005); // Yüzdeye göre dönüş hızı
+            // Grafik ve Telemetri Güncelleme
+            labels.speed.innerText = velocity.toFixed(1);
+            labels.lift.innerText = lift.toFixed(0);
+            labels.drag.innerText = drag.toFixed(0);
+            labels.g.innerText = (1 + lift/100).toFixed(1);
+
+            physicsChart.data.datasets[0].data.shift();
+            physicsChart.data.datasets[0].data.push(lift);
+            physicsChart.data.datasets[1].data.shift();
+            physicsChart.data.datasets[1].data.push(drag);
+            physicsChart.update('none');
 
             renderer.render(scene, camera);
         }
 
-        // Pencere boyutu değiştiğinde 3D alanı uydur
         window.addEventListener('resize', () => {
             camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(container.clientWidth, container.clientHeight);
         });
 
-        // Simülasyonu Başlat
         animate();
     </script>
 </body>
