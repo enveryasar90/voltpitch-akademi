@@ -17,50 +17,52 @@
                               linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Firefox için kaydırma çubuğu gizleme */
+        .no-scrollbar { scrollbar-width: none; }
         input[type=range] { accent-color: #2563eb; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
+<body class="bg-slate-50 text-slate-800 min-h-screen lg:h-screen flex flex-col lg:overflow-hidden">
 
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center">
+            <div class="flex flex-col md:flex-row justify-between md:h-16 items-center py-3 md:py-0 gap-3 md:gap-0">
+                <div class="flex items-center w-full md:w-auto justify-center md:justify-start">
                     <span class="font-extrabold text-2xl tracking-tight text-slate-900">
                         Volt<span class="text-blue-600">pitch</span> 
                         <span class="font-light text-slate-500 text-xl ml-1">Akademi</span>
                     </span>
                 </div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="index.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Ana Sayfa</a>
-                    <a href="telemetri.html" class="text-blue-600 border-b-2 border-blue-600 px-3 py-2 text-sm font-bold">Telemetri Merkezi</a>
-                    <a href="ucus-dinamikleri.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Uçuş Dinamikleri</a>
-                    <a href="arge-atolyesi.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Ar-Ge Atölyesi</a>
-                    <a href="dokumantasyon.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Dokümantasyon</a>
+                <div class="flex w-full md:w-auto overflow-x-auto no-scrollbar space-x-2 sm:space-x-8 justify-start md:justify-end pb-1 md:pb-0">
+                    <a href="index.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Ana Sayfa</a>
+                    <a href="telemetri.html" class="text-blue-600 border-b-2 border-blue-600 px-3 py-2 text-sm font-bold whitespace-nowrap">Telemetri Merkezi</a>
+                    <a href="ucus-dinamikleri.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Uçuş Dinamikleri</a>
+                    <a href="arge-atolyesi.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Ar-Ge Atölyesi</a>
+                    <a href="dokumantasyon.html" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Dokümantasyon</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 py-4 flex flex-col gap-4 overflow-hidden">
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 py-4 flex flex-col gap-4 lg:overflow-hidden">
         
-        <div class="bg-white border border-slate-200 rounded-xl px-6 py-3 flex justify-between items-center shadow-sm">
-            <div class="flex items-center gap-4">
+        <div class="bg-white border border-slate-200 rounded-xl px-4 md:px-6 py-3 flex flex-col sm:flex-row justify-between items-center shadow-sm gap-3 sm:gap-0">
+            <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
                 <span class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-widest">
                     <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
                     TUNA E-96 OTONOM ROVER
                 </span>
                 <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded">VERİ AKIŞI AKTİF</span>
             </div>
-            <div class="text-right">
+            <div class="text-center sm:text-right flex sm:block items-center gap-2 sm:gap-0">
                 <p class="text-[10px] text-slate-400 font-bold uppercase">Gecikme (Ping)</p>
                 <p class="text-green-600 font-mono font-bold text-sm">24 ms</p>
             </div>
         </div>
 
-        <div class="flex-1 flex gap-4 overflow-hidden">
+        <div class="flex-1 flex flex-col lg:flex-row gap-4 lg:overflow-hidden pb-4 lg:pb-0">
             
-            <div class="w-96 flex flex-col gap-4 shrink-0 overflow-y-auto no-scrollbar">
+            <div class="w-full lg:w-96 flex flex-col gap-4 shrink-0 lg:overflow-y-auto no-scrollbar">
                 
                 <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
                     <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Güç ve İletişim</h2>
@@ -79,12 +81,12 @@
                     </div>
                 </div>
 
-                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative flex-1 flex flex-col min-h-[400px]">
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative flex-1 flex flex-col min-h-[350px] lg:min-h-[400px]">
                     <div class="flex justify-between items-center mb-2">
                         <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Durum & Lidar</h2>
                         <div id="stallWarning" class="hidden text-[10px] font-bold text-red-600 animate-pulse uppercase">Kritik Eğim!</div>
                     </div>
-                    <div id="rover-canvas" class="flex-1 bg-slate-50 rounded-lg border border-slate-100 overflow-hidden relative">
+                    <div id="rover-canvas" class="flex-1 bg-slate-50 rounded-lg border border-slate-100 overflow-hidden relative min-h-[200px]">
                         <div class="absolute bottom-2 left-2 z-10 space-y-1">
                             <div class="text-[9px] font-mono bg-white/80 px-1 rounded">P: <span id="pVal">0</span>°</div>
                             <div class="text-[9px] font-mono bg-white/80 px-1 rounded">R: <span id="rVal">0</span>°</div>
@@ -96,7 +98,7 @@
                     </div>
                 </div>
 
-                <div class="bg-slate-900 rounded-xl p-4 shadow-sm h-64 flex flex-col">
+                <div class="bg-slate-900 rounded-xl p-4 shadow-sm h-64 shrink-0 flex flex-col">
                     <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Sistem Logları</h2>
                     <div class="flex-1 font-mono text-[10px] text-green-400 overflow-y-auto no-scrollbar space-y-1" id="logWindow">
                         <p>[08:21:40] > Sistem başlatıldı.</p>
@@ -107,18 +109,18 @@
                 </div>
             </div>
 
-            <div class="flex-1 flex flex-col gap-4">
+            <div class="flex-1 flex flex-col gap-4 lg:overflow-y-auto no-scrollbar">
                 
-                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex-1 flex flex-col">
+                <div class="bg-white border border-slate-200 rounded-xl p-4 md:p-6 shadow-sm flex-1 flex flex-col min-h-[250px] lg:min-h-0">
                     <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Motor Sıcaklıkları (°C)</h2>
-                    <div class="flex-1 min-h-0">
+                    <div class="flex-1 min-h-[180px] lg:min-h-0 relative">
                         <canvas id="tempChart"></canvas>
                     </div>
                 </div>
 
-                <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex-1 flex flex-col">
+                <div class="bg-white border border-slate-200 rounded-xl p-4 md:p-6 shadow-sm flex-1 flex flex-col min-h-[250px] lg:min-h-0">
                     <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Anlık Güç Tüketimi (W)</h2>
-                    <div class="flex-1 min-h-0">
+                    <div class="flex-1 min-h-[180px] lg:min-h-0 relative">
                         <canvas id="powerChart"></canvas>
                     </div>
                 </div>
@@ -140,7 +142,6 @@
             elements: { line: { tension: 0.4 }, point: { radius: 0 } }
         };
 
-        // Sıcaklık Grafiği
         const tempCtx = document.getElementById('tempChart').getContext('2d');
         const tempChart = new Chart(tempCtx, {
             type: 'line',
@@ -156,7 +157,6 @@
             options: commonOptions
         });
 
-        // Güç Grafiği
         const powerCtx = document.getElementById('powerChart').getContext('2d');
         const powerChart = new Chart(powerCtx, {
             type: 'line',
@@ -172,7 +172,6 @@
             options: commonOptions
         });
 
-        // Veri Simülasyonu
         setInterval(() => {
             const updateChart = (chart, min, max) => {
                 chart.data.datasets[0].data.shift();
@@ -202,12 +201,10 @@
         scene.add(new THREE.AmbientLight(0xffffff, 0.5));
         scene.add(new THREE.GridHelper(10, 10, 0xcbd5e1, 0xf1f5f9));
 
-        // Rover Modeli
         const rover = new THREE.Group();
         const chassis = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 1.2), new THREE.MeshPhongMaterial({ color: 0x334155 }));
         rover.add(chassis);
 
-        // Lidar (Üst Çıkıntı)
         const lidarBase = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.3), new THREE.MeshPhongMaterial({ color: 0x1e293b }));
         lidarBase.position.y = 0.4;
         rover.add(lidarBase);
@@ -216,7 +213,6 @@
         lidarScanner.position.y = 0.6;
         rover.add(lidarScanner);
 
-        // 6 Tekerlek
         const wheelGeom = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 12);
         const wheelMat = new THREE.MeshPhongMaterial({ color: 0x0f172a });
         const wheelPositions = [
@@ -232,7 +228,6 @@
 
         scene.add(rover);
 
-        // Animasyon ve Kontrol
         const pIn = document.getElementById('pitchIn');
         const rIn = document.getElementById('rollIn');
         const pLabel = document.getElementById('pVal');
@@ -248,7 +243,6 @@
             pLabel.innerText = p;
             rLabel.innerText = r;
 
-            // Kısıtlı Açı Uygulaması (Görsel uyarı)
             if(Math.abs(p) >= 44 || Math.abs(r) >= 44) {
                 stallWarn.classList.remove('hidden');
             } else {
@@ -257,18 +251,23 @@
 
             rover.rotation.x = THREE.MathUtils.degToRad(p);
             rover.rotation.z = THREE.MathUtils.degToRad(r);
-            lidarScanner.rotation.y += 0.1; // Lidar sürekli dönsün
+            lidarScanner.rotation.y += 0.1; 
 
             renderer.render(scene, camera);
         }
 
         animate();
 
-        // Boyut Değişimi Yakalama
+        // Boyut Değişimi Yakalama (Responsive için Optimize Edildi)
         window.addEventListener('resize', () => {
+            if(roverContainer.clientWidth === 0 || roverContainer.clientHeight === 0) return;
             camera.aspect = roverContainer.clientWidth / roverContainer.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(roverContainer.clientWidth, roverContainer.clientHeight);
+            
+            // Chart.js grafikleri otomatik boyutlanır ancak container'larının tetiklenmesi için resize anında ufak bir delay faydalı olabilir
+            tempChart.resize();
+            powerChart.resize();
         });
     </script>
 </body>
