@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemetri Merkezi | Voltpitch Akademi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .bg-grid {
+            background-size: 30px 30px;
+            background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+                              linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; }
+        input[type=range] { accent-color: #2563eb; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen lg:h-screen flex flex-col lg:overflow-hidden">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between md:h-16 items-center py-3 md:py-0 gap-3 md:gap-0">
+                <div class="flex items-center w-full md:w-auto justify-center md:justify-start">
+                    <span class="font-extrabold text-2xl tracking-tight text-slate-900">
+                        Volt<span class="text-blue-600">pitch</span> 
+                        <span class="font-light text-slate-500 text-xl ml-1">Akademi</span>
+                    </span>
+                </div>
+                <div class="flex w-full md:w-auto overflow-x-auto no-scrollbar space-x-2 sm:space-x-8 justify-start md:justify-end pb-1 md:pb-0">
+                    <a href="/ana-sayfa/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Ana Sayfa</a>
+                    <a href="/telemetri/" class="text-blue-600 border-b-2 border-blue-600 px-3 py-2 text-sm font-bold whitespace-nowrap">Telemetri Merkezi</a>
+                    <a href="/ucus-dinamikleri/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Uçuş Dinamikleri</a>
+                    <a href="/arge-atolyesi/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Ar-Ge Atölyesi</a>
+                    <a href="/dokumantasyon/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition whitespace-nowrap">Dokümantasyon</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 py-4 flex flex-col gap-4 lg:overflow-hidden">
+        
+        <div class="bg-white border border-slate-200 rounded-xl px-4 md:px-6 py-3 flex flex-col sm:flex-row justify-between items-center shadow-sm gap-3 sm:gap-0">
+            <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+                <span class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-widest">
+                    <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                    TUNA E-96 OTONOM ROVER
+                </span>
+                <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded">VERİ AKIŞI AKTİF</span>
+            </div>
+            <div class="text-center sm:text-right flex sm:block items-center gap-2 sm:gap-0">
+                <p class="text-[10px] text-slate-400 font-bold uppercase">Gecikme (Ping)</p>
+                <p class="text-green-600 font-mono font-bold text-sm">24 ms</p>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col lg:flex-row gap-4 lg:overflow-hidden pb-4 lg:pb-0">
+            
+            <div class="w-full lg:w-96 flex flex-col gap-4 shrink-0 lg:overflow-y-auto no-scrollbar">
+                
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                    <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Güç ve İletişim</h2>
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <p class="text-xs text-slate-500">Ana Batarya</p>
+                            <p class="text-2xl font-bold text-slate-900">84%</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-slate-500">Sinyal Gücü</p>
+                            <p class="text-xl font-mono font-bold text-blue-600">-68 <span class="text-xs">dBm</span></p>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-blue-600 h-full w-[84%]"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative flex-1 flex flex-col min-h-[300px]">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Durum & Lidar</h2>
+                        <div id="stallWarning" class="hidden text-[10px] font-bold text-red-600 animate-pulse uppercase">Kritik Eğim!</div>
+                    </div>
+                    <div id="rover-canvas" class="flex-1 bg-slate-50 rounded-lg border border-slate-100 overflow-hidden relative min-h-[180px]">
+                        <div class="absolute bottom-2 left-2 z-10 space-y-1">
+                            <div class="text-[9px] font-mono bg-white/80 px-1 rounded">P: <span id="pVal">0</span>°</div>
+                            <div class="text-[9px] font-mono bg-white/80 px-1 rounded">R: <span id="rVal">0</span>°</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 space-y-2">
+                        <input type="range" id="pitchIn" min="-45" max="45" value="0" class="w-full h-1">
+                        <input type="range" id="rollIn" min="-45" max="45" value="0" class="w-full h-1">
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-xl p-4 shadow-sm h-48 shrink-0 flex flex-col">
+                    <h2 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Sistem Logları</h2>
+                    <div class="flex-1 font-mono text-[10px] text-green-400 overflow-y-auto no-scrollbar space-y-1" id="logWindow">
+                        <p>[08:21:40] > Sistem başlatıldı.</p>
+                        <p>[08:21:42] > Lidar aktif, tarama yapılıyor...</p>
+                        <p class="text-yellow-400">[08:21:44] > WARN: Yaklaşan engeller tespit edildi.</p>
+                        <p class="text-blue-400">[08:21:46] > NET: Telemetri paketi gönderildi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 flex flex-col gap-4 lg:overflow-y-auto no-scrollbar">
+                
+                <div class="flex flex-col xl:flex-row gap-4 min-h-[250px] lg:flex-none">
+                    
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex-1 flex flex-col items-center justify-center relative min-h-[250px]">
+                        <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 w-full text-left absolute top-4 left-4">2D Çevre Tarama</h2>
+                        <div class="relative w-[200px] h-[200px] md:w-[220px] md:h-[220px] mt-4">
+                            <canvas id="radarCanvas" class="w-full h-full rounded-full bg-slate-900 border-4 border-slate-800 shadow-inner"></canvas>
+                            <div class="absolute top-1/2 left-1/2 w-2 h-2 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 z-10 shadow-[0_0_5px_white]"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 md:p-5 shadow-sm flex-[1.5] flex flex-col min-h-[200px]">
+                        <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Motor Sıcaklıkları (°C)</h2>
+                        <div class="flex-1 relative">
+                            <canvas id="tempChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-xl p-4 md:p-5 shadow-sm flex-1 flex flex-col min-h-[200px]">
+                    <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Anlık Güç Tüketimi (W)</h2>
+                    <div class="flex-1 relative">
+                        <canvas id="powerChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- CHART.JS AYARLARI ---
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 9 } } },
+                x: { grid: { display: false }, ticks: { display: false } }
+            },
+            plugins: { legend: { display: false } },
+            elements: { line: { tension: 0.4 }, point: { radius: 0 } },
+            layout: { padding: 0 }
+        };
+
+        const tempCtx = document.getElementById('tempChart').getContext('2d');
+        const tempChart = new Chart(tempCtx, {
+            type: 'line',
+            data: {
+                labels: Array(30).fill(''),
+                datasets: [{ borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', fill: true, data: Array(30).fill(35), borderWidth: 2 }]
+            },
+            options: commonOptions
+        });
+
+        const powerCtx = document.getElementById('powerChart').getContext('2d');
+        const powerChart = new Chart(powerCtx, {
+            type: 'line',
+            data: {
+                labels: Array(30).fill(''),
+                datasets: [{ borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, data: Array(30).fill(10), borderWidth: 2 }]
+            },
+            options: commonOptions
+        });
+
+        setInterval(() => {
+            const updateChart = (chart, min, max) => {
+                chart.data.datasets[0].data.shift();
+                const lastVal = chart.data.datasets[0].data[chart.data.datasets[0].data.length - 1];
+                const newVal = lastVal + (Math.random() - 0.5) * 5;
+                chart.data.datasets[0].data.push(Math.max(min, Math.min(max, newVal)));
+                chart.update('none');
+            };
+            updateChart(tempChart, 30, 80);
+            updateChart(powerChart, 5, 50);
+        }, 1000);
+
+        // --- THREE.JS: TUNA E-96 DURUM & ENGEL GÖSTERGESİ ---
+        const roverContainer = document.getElementById('rover-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, roverContainer.clientWidth / roverContainer.clientHeight, 0.1, 1000);
+        camera.position.set(5, 4, 6);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(roverContainer.clientWidth, roverContainer.clientHeight);
+        roverContainer.appendChild(renderer.domElement);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1.2);
+        light.position.set(5, 10, 5);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        scene.add(new THREE.GridHelper(12, 12, 0xcbd5e1, 0xf1f5f9));
+
+        const rover = new THREE.Group();
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 1.2), new THREE.MeshPhongMaterial({ color: 0x334155 }));
+        rover.add(chassis);
+
+        const lidarBase = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.3), new THREE.MeshPhongMaterial({ color: 0x1e293b }));
+        lidarBase.position.y = 0.4;
+        rover.add(lidarBase);
+        
+        const lidarScanner = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.1), new THREE.MeshPhongMaterial({ color: 0xef4444 }));
+        lidarScanner.position.y = 0.6;
+        rover.add(lidarScanner);
+
+        const wheelGeom = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 12);
+        const wheelMat = new THREE.MeshPhongMaterial({ color: 0x0f172a });
+        const wheelPositions = [ [0.7, -0.25, 0.7], [0, -0.25, 0.7], [-0.7, -0.25, 0.7], [0.7, -0.25, -0.7], [0, -0.25, -0.7], [-0.7, -0.25, -0.7] ];
+        wheelPositions.forEach(pos => {
+            const w = new THREE.Mesh(wheelGeom, wheelMat);
+            w.position.set(pos[0], pos[1], pos[2]);
+            w.rotation.x = Math.PI / 2;
+            rover.add(w);
+        });
+
+        scene.add(rover);
+
+        // --- ENGELLER (SİYAH TOPLAR) ---
+        const obstaclesCount = 4;
+        const obstacles = [];
+        const obsGeom = new THREE.SphereGeometry(0.2, 16, 16);
+        const obsMat = new THREE.MeshPhongMaterial({ color: 0x000000 }); // Siyah renk
+
+        for(let i = 0; i < obstaclesCount; i++) {
+            const obs = new THREE.Mesh(obsGeom, obsMat);
+            // Rastgele bir açıda ve uzaklıkta başlat
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 4 + Math.random() * 3; 
+            obs.position.set(Math.cos(angle) * distance, 0.2, Math.sin(angle) * distance);
+            scene.add(obs);
+            
+            obstacles.push({
+                mesh: obs,
+                speed: 0.01 + Math.random() * 0.02
+            });
+        }
+
+        // --- 2D RADAR (LIDAR) CANVAS AYARLARI ---
+        const radarCanvas = document.getElementById('radarCanvas');
+        const rCtx = radarCanvas.getContext('2d');
+        // Canvas iç çözünürlüğü (Daha net görünüm için)
+        radarCanvas.width = 300;
+        radarCanvas.height = 300;
+        const cx = radarCanvas.width / 2;
+        const cy = radarCanvas.height / 2;
+        const radarRadius = 140; // Max çizim alanı
+        const max3DDistance = 7; // 3D sahnede radarın ucuna denk gelen maksimum birim
+        let sweepAngle = 0;
+
+        function drawRadar() {
+            // Radar iz bırakma efekti (hafif şeffaf siyahla üstünü boyama)
+            rCtx.fillStyle = 'rgba(15, 23, 42, 0.15)'; // Slate-900
+            rCtx.fillRect(0, 0, radarCanvas.width, radarCanvas.height);
+
+            // Radar Halkaları (Grid)
+            rCtx.strokeStyle = 'rgba(74, 222, 128, 0.3)'; // Yeşilimsi çizgiler
+            rCtx.lineWidth = 1;
+            rCtx.beginPath();
+            rCtx.arc(cx, cy, radarRadius * 0.33, 0, Math.PI * 2);
+            rCtx.arc(cx, cy, radarRadius * 0.66, 0, Math.PI * 2);
+            rCtx.arc(cx, cy, radarRadius, 0, Math.PI * 2);
+            rCtx.stroke();
+
+            // Çapraz çizgiler
+            rCtx.beginPath();
+            rCtx.moveTo(cx, cy - radarRadius); rCtx.lineTo(cx, cy + radarRadius);
+            rCtx.moveTo(cx - radarRadius, cy); rCtx.lineTo(cx + radarRadius, cy);
+            rCtx.stroke();
+
+            // Tarama Animasyonu (Sweeper)
+            rCtx.save();
+            rCtx.translate(cx, cy);
+            rCtx.rotate(sweepAngle);
+            rCtx.beginPath();
+            rCtx.moveTo(0, 0);
+            rCtx.arc(0, 0, radarRadius, 0, 0.25); // 0.25 radyanlık bir üçgen dilim
+            rCtx.closePath();
+            rCtx.fillStyle = 'rgba(74, 222, 128, 0.4)'; // Parlak yeşil tarayıcı
+            rCtx.fill();
+            rCtx.restore();
+            sweepAngle -= 0.04; // Dönüş hızı
+
+            // Engelleri Radara Çiz (3D koordinatları 2D'ye çevirme)
+            obstacles.forEach(obs => {
+                const scale = radarRadius / max3DDistance;
+                // 3D uzaydaki X ve Z, radardaki X ve Y'ye denk gelir
+                const radarX = cx + (obs.mesh.position.x * scale);
+                const radarY = cy + (obs.mesh.position.z * scale);
+
+                // Tarayıcı çizgisinin açısından engelin açısına bakarak "parlama" efekti yapılabilir, 
+                // ancak basitlik için direkt parlak kırmızı veya yeşil noktalar çiziyoruz.
+                rCtx.beginPath();
+                rCtx.arc(radarX, radarY, 5, 0, Math.PI * 2);
+                rCtx.fillStyle = '#4ade80'; // Parlak yeşil noktalar (Lidar verisi)
+                rCtx.fill();
+                
+                // Noktaların etrafına hafif parlama
+                rCtx.beginPath();
+                rCtx.arc(radarX, radarY, 8, 0, Math.PI * 2);
+                rCtx.fillStyle = 'rgba(74, 222, 128, 0.3)';
+                rCtx.fill();
+            });
+        }
+
+
+        // Animasyon ve Kontroller
+        const pIn = document.getElementById('pitchIn');
+        const rIn = document.getElementById('rollIn');
+        const pLabel = document.getElementById('pVal');
+        const rLabel = document.getElementById('rVal');
+        const stallWarn = document.getElementById('stallWarning');
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const p = parseFloat(pIn.value);
+            const r = parseFloat(rIn.value);
+            
+            pLabel.innerText = p;
+            rLabel.innerText = r;
+
+            if(Math.abs(p) >= 44 || Math.abs(r) >= 44) { stallWarn.classList.remove('hidden'); } 
+            else { stallWarn.classList.add('hidden'); }
+
+            rover.rotation.x = THREE.MathUtils.degToRad(p);
+            rover.rotation.z = THREE.MathUtils.degToRad(r);
+            lidarScanner.rotation.y += 0.15; // Aracın üzerindeki sensör de dönsün
+
+            // Engelleri araca (merkeze) doğru hareket ettir
+            obstacles.forEach(obs => {
+                const dx = -obs.mesh.position.x;
+                const dz = -obs.mesh.position.z;
+                const distance = Math.sqrt(dx*dx + dz*dz);
+                
+                if(distance > 1.2) { // Araca çok girmesinler (Güvenlik mesafesi)
+                    obs.mesh.position.x += (dx / distance) * obs.speed;
+                    obs.mesh.position.z += (dz / distance) * obs.speed;
+                } else {
+                    // Merkeze ulaşan engeli uzak bir noktada yeniden doğur
+                    const angle = Math.random() * Math.PI * 2;
+                    const newDist = max3DDistance + Math.random() * 2;
+                    obs.mesh.position.set(Math.cos(angle) * newDist, 0.2, Math.sin(angle) * newDist);
+                }
+            });
+
+            // Radarı her karede güncelle
+            drawRadar();
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Responsive Boyutlandırma
+        window.addEventListener('resize', () => {
+            if(roverContainer.clientWidth === 0 || roverContainer.clientHeight === 0) return;
+            camera.aspect = roverContainer.clientWidth / roverContainer.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(roverContainer.clientWidth, roverContainer.clientHeight);
+            tempChart.resize();
+            powerChart.resize();
+        });
+    </script>
+</body>
+</html>

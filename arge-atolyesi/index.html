@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ar-Ge Atölyesi | Voltpitch Akademi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                              linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <span class="font-extrabold text-xl sm:text-2xl tracking-tight text-slate-900">
+                        Volt<span class="text-blue-600">pitch</span> 
+                        <span class="font-light text-slate-500 text-lg sm:text-xl ml-1">Akademi</span>
+                    </span>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="/ana-sayfa/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Ana Sayfa</a>
+                    <a href="/telemetri/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Telemetri Merkezi</a>
+                    <a href="/ucus-dinamikleri/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Uçuş Dinamikleri</a>
+                    <a href="/arge-atolyesi/" class="text-blue-600 border-b-2 border-blue-600 px-3 py-2 text-sm font-bold">Ar-Ge Atölyesi</a>
+                    <a href="/dokumantasyon/" class="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition">Dokümantasyon</a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="text-slate-500 hover:text-blue-600 focus:outline-none p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path id="menuIcon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            <path id="closeIcon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1 shadow-lg absolute w-full left-0 top-16 z-40">
+            <a href="/ana-sayfa/" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50">Ana Sayfa</a>
+            <a href="/telemetri/" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50">Telemetri Merkezi</a>
+            <a href="/ucus-dinamikleri/" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50">Uçuş Dinamikleri</a>
+            <a href="/arge-atolyesi/" class="block px-3 py-2 rounded-md text-base font-bold text-blue-600 bg-blue-50">Ar-Ge Atölyesi</a>
+            <a href="/dokumantasyon/" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50">Dokümantasyon</a>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
+        
+        <div class="mb-6 sm:mb-8">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Üretim & Prototip Atölyesi</h1>
+            <p class="text-sm sm:text-base text-slate-500 mt-2">Açık kaynaklı 3D tasarımlar, devre şemaları ve üretim öncesi optimizasyon araçları.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+            
+            <div class="lg:col-span-2 flex flex-col gap-6 sm:gap-8">
+                
+                <section class="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        Mekanik Tasarım Kütüphanesi (STL)
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div class="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition group flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-2 gap-2">
+                                    <h3 class="font-bold text-slate-700 text-sm sm:text-base">Tuna E96 - Alt Şasi</h3>
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded shrink-0">DOĞRULANDI</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-500 mb-4">6 tekerlekli süspansiyon sistemine uygun, hafifletilmiş ana gövde iskeleti. ToF sensör yuvaları entegredir.</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs gap-3 sm:gap-0 mt-auto">
+                                <span class="font-mono text-slate-400 text-[11px] sm:text-xs">Önerilen: PETG, %40 Infill</span>
+                                <button class="text-blue-600 font-bold hover:text-blue-800 flex items-center gap-1 w-max">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    STL İndir
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition group flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-2 gap-2">
+                                    <h3 class="font-bold text-slate-700 text-sm sm:text-base">Serhat K1 - Motor Tutucu</h3>
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded shrink-0">BETA</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-500 mb-4">Fırçasız motorlar için aerodinamik olarak optimize edilmiş, titreşim sönümleyici kanat bağlantı modülü.</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs gap-3 sm:gap-0 mt-auto">
+                                <span class="font-mono text-slate-400 text-[11px] sm:text-xs">Önerilen: PLA/Karb., %60 Infill</span>
+                                <button class="text-blue-600 font-bold hover:text-blue-800 flex items-center gap-1 w-max">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    STL İndir
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 shadow-sm">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Elektronik Bağlantı Şemaları (Pinout)
+                    </h2>
+                    <div class="bg-slate-900 rounded-lg p-4 sm:p-5 text-slate-300 font-mono text-xs sm:text-sm overflow-x-auto whitespace-nowrap">
+                        <p class="text-blue-400 mb-2">// STM32 & ToF Sensör (I2C) Bağlantı Konfigürasyonu</p>
+                        <p>STM32 (3.3V)  ------>  ToF VCC</p>
+                        <p>STM32 (GND)   ------>  ToF GND</p>
+                        <p>STM32 (PB6)   ------>  ToF SCL (I2C Clock)</p>
+                        <p>STM32 (PB7)   ------>  ToF SDA (I2C Data)</p>
+                        <br>
+                        <p class="text-yellow-400 whitespace-normal min-w-[280px]">// Uyarı: Uzun I2C kablolarında sinyal kaybını önlemek için 4.7k pull-up direnç kullanın.</p>
+                    </div>
+                </section>
+
+            </div>
+
+            <div class="flex flex-col gap-6">
+                
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="bg-blue-600 p-4">
+                        <h2 class="text-white font-bold flex items-center gap-2 text-base sm:text-lg">
+                            <svg class="w-5 h-5 text-blue-200 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            3D Baskı Kütle Analizi
+                        </h2>
+                        <p class="text-blue-100 text-[11px] sm:text-xs mt-1">Altay R3 revizyon notu: Uçuş ve sürüş dinamiği için üretim öncesi ağırlık onayı zorunludur.</p>
+                    </div>
+                    
+                    <div class="p-4 sm:p-5">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-semibold text-slate-600 mb-1">Malzeme Tipi</label>
+                                <select id="matSelect" class="w-full border border-slate-300 rounded p-2 text-sm focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                    <option value="1.24">PLA (Standart) - 1.24 g/cm³</option>
+                                    <option value="1.27">PETG (Dayanıklı) - 1.27 g/cm³</option>
+                                    <option value="1.30">PLA-CF (Karbon) - 1.30 g/cm³</option>
+                                    <option value="1.04">ABS (Hafif) - 1.04 g/cm³</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs sm:text-sm font-semibold text-slate-600 mb-1">Tasarım Hacmi (cm³)</label>
+                                <input type="number" id="volInput" value="150" class="w-full border border-slate-300 rounded p-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Fusion 360'tan aldığınız hacim değerini girin.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs sm:text-sm font-semibold text-slate-600 mb-1">Doluluk Oranı (Infill %)</label>
+                                <input type="range" id="infillSlider" min="10" max="100" value="40" class="w-full accent-blue-600">
+                                <div class="text-right text-xs sm:text-sm font-mono font-bold text-blue-600" id="infillVal">40%</div>
+                            </div>
+                        </div>
+
+                        <hr class="my-5 border-slate-200">
+
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
+                            <p class="text-[11px] sm:text-xs text-slate-500 font-bold uppercase tracking-wide">Tahmini Parça Ağırlığı</p>
+                            <p class="text-2xl sm:text-3xl font-mono font-extrabold text-slate-800 mt-1"><span id="weightResult">74.4</span> <span class="text-base sm:text-lg text-slate-500 font-sans font-normal">gram</span></p>
+                            <p id="weightWarning" class="text-xs sm:text-sm font-bold text-green-600 mt-2">Havacılık standartlarına uygun.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Form ve Hesaplama JS (Değişmedi)
+        const matSelect = document.getElementById('matSelect');
+        const volInput = document.getElementById('volInput');
+        const infillSlider = document.getElementById('infillSlider');
+        const infillVal = document.getElementById('infillVal');
+        const weightResult = document.getElementById('weightResult');
+        const weightWarning = document.getElementById('weightWarning');
+
+        const calculateWeight = () => {
+            const density = parseFloat(matSelect.value);
+            const volume = parseFloat(volInput.value) || 0;
+            const infill = parseFloat(infillSlider.value) / 100;
+
+            const estimatedWeight = volume * density * (0.2 + (infill * 0.8)); 
+            
+            weightResult.innerText = estimatedWeight.toFixed(1);
+
+            if(estimatedWeight > 200) {
+                weightWarning.innerText = "UYARI: Yüksek Kütle! Tasarımı hafifletin.";
+                weightWarning.className = "text-xs sm:text-sm font-bold text-red-600 mt-2";
+            } else {
+                weightWarning.innerText = "Havacılık standartlarına uygun kütle.";
+                weightWarning.className = "text-xs sm:text-sm font-bold text-green-600 mt-2";
+            }
+        };
+
+        matSelect.addEventListener('change', calculateWeight);
+        volInput.addEventListener('input', calculateWeight);
+        infillSlider.addEventListener('input', (e) => {
+            infillVal.innerText = e.target.value + '%';
+            calculateWeight();
+        });
+
+        calculateWeight();
+
+        // --- YENİ: Mobil Menü Javascript'i ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+        const closeIcon = document.getElementById('closeIcon');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
