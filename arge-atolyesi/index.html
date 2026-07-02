@@ -116,15 +116,15 @@
                         <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Elektronik Bağlantı Şemaları (Pinout)
                     </h2>
-                    <div class="bg-slate-900 rounded-lg p-4 sm:p-5 text-slate-300 font-mono text-xs sm:text-sm overflow-x-auto whitespace-nowrap">
-                        <p class="text-blue-400 mb-2">// STM32 & ToF Sensör (I2C) Bağlantı Konfigürasyonu</p>
-                        <p>STM32 (3.3V)  ------>  ToF VCC</p>
-                        <p>STM32 (GND)   ------>  ToF GND</p>
-                        <p>STM32 (PB6)   ------>  ToF SCL (I2C Clock)</p>
-                        <p>STM32 (PB7)   ------>  ToF SDA (I2C Data)</p>
-                        <br>
-                        <p class="text-yellow-400 whitespace-normal min-w-[280px]">// Uyarı: Uzun I2C kablolarında sinyal kaybını önlemek için 4.7k pull-up direnç kullanın.</p>
+    
+                    <div class="flex gap-2 mb-4 border-b border-slate-100 pb-3 overflow-x-auto">
+                        <button onclick="changePinout('stm32')" id="btn-stm32" class="pinout-btn px-3 py-1.5 text-xs font-bold rounded bg-blue-600 text-white transition">STM32 & ToF</button>
+                        <button onclick="changePinout('esp32')" id="btn-esp32" class="pinout-btn px-3 py-1.5 text-xs font-medium rounded bg-slate-100 text-slate-600 hover:bg-slate-200 transition">ESP32 & GPS</button>
+                        <button onclick="changePinout('arduino')" id="btn-arduino" class="pinout-btn px-3 py-1.5 text-xs font-medium rounded bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Arduino & Telemetri</button>
                     </div>
+
+                        <div id="pinoutTerminal" class="bg-slate-900 rounded-lg p-4 sm:p-5 text-slate-300 font-mono text-xs sm:text-sm overflow-x-auto whitespace-nowrap">
+                        </div>
                 </section>
 
             </div>
@@ -214,7 +214,54 @@
         });
 
         calculateWeight();
+        // --- YENİ: Dinamik Pinout Değiştirici ---
+        const pinoutData = {
+            stm32: `
+                <p class="text-blue-400 mb-2">// STM32 & ToF Sensör (I2C) Bağlantı Konfigürasyonu</p>
+                <p>STM32 (3.3V)  ------>  ToF VCC</p>
+                <p>STM32 (GND)   ------>  ToF GND</p>
+                <p>STM32 (PB6)   ------>  ToF SCL (I2C Clock)</p>
+                <p>STM32 (PB7)   ------>  ToF SDA (I2C Data)</p>
+                <br>
+                <p class="text-yellow-400 whitespace-normal min-w-[280px]">// Uyarı: Uzun I2C kablolarında sinyal kaybını önlemek için 4.7k pull-up direnç kullanın.</p>
+            `,
+            esp32: `
+                <p class="text-green-400 mb-2">// ESP32 & Neo-6M GPS (UART) Bağlantı Konfigürasyonu</p>
+                <p>ESP32 (5V)     ------>  GPS VCC</p>
+                <p>ESP32 (GND)    ------>  GPS GND</p>
+                <p>ESP32 (TX2/G17) ------>  GPS RX</p>
+                <p>ESP32 (RX2/G16) ------>  GPS TX</p>
+                <br>
+                <p class="text-yellow-400 whitespace-normal min-w-[280px]">// Uyarı: GPS modülünün kapalı alanda uydu yakalaması uzun sürebilir, açık alanda test edin.</p>
+                `,
+            arduino: `
+                <p class="text-purple-400 mb-2">// Arduino Nano & NRF24L01 Kablosuz Modül (SPI)</p>
+                <p>Arduino (3.3V) ------>  NRF24L01 VCC (Akım yetersizse harici besleyin)</p>
+                <p>Arduino (GND)  ------>  NRF24L01 GND</p>
+                <p>Arduino (D11)  ------>  NRF24L01 MOSI</p>
+                <p>Arduino (D12)  ------>  NRF24L01 MISO</p>
+                <p>Arduino (D13)  ------>  NRF24L01 SCK</p>
+             `
+        };
 
+        function changePinout(type) {
+            // 1. Terminal İçeriğini Değiştir
+            document.getElementById('pinoutTerminal').innerHTML = pinoutData[type];
+
+            // 2. Aktif Butonun Stilini Güncelle (Açık Öğretim DOM manipülasyon pratiği)
+            const buttons = document.querySelectorAll('.pinout-btn');
+            buttons.forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white', 'font-bold');
+            btn.classList.add('bg-slate-100', 'text-slate-600', 'font-medium');
+        });
+
+            const activeBtn = document.getElementById('btn-' + type);
+            activeBtn.classList.remove('bg-slate-100', 'text-slate-600', 'font-medium');
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'font-bold');
+        }
+
+        // Sayfa ilk açıldığında STM32 şeması yüklensin
+        changePinout('stm32');
         // --- YENİ: Mobil Menü Javascript'i ---
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
