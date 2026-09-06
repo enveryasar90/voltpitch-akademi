@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltPitch - Aviyonik Sistemler & MIL-STD-1553</title>
+  <style>
+    :root {
+      --vp-primary-blue: #0056e0;
+      --vp-dark-text: #0f172a;
+      --vp-gray-text: #475569;
+      --vp-border: #e2e8f0;
+      --vp-bg-light: #f8fafc;
+      --vp-card-bg: #ffffff;
+      --vp-bus-a: #0284c7;
+      --vp-bus-b: #059669;
+      --vp-danger: #e11d48;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--vp-bg-light);
+      color: var(--vp-dark-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* VoltPitch Navbar */
+    .vp-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--vp-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .vp-nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 68px;
+    }
+
+    .vp-logo {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+      color: #0b1329;
+    }
+
+    .vp-logo span {
+      color: var(--vp-primary-blue);
+    }
+
+    .vp-nav-links {
+      display: flex;
+      list-style: none;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .vp-nav-links li a {
+      text-decoration: none;
+      color: var(--vp-gray-text);
+      font-size: 14.5px;
+      font-weight: 500;
+      padding: 23px 0 20px 0;
+      display: inline-block;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .vp-nav-links li a:hover {
+      color: var(--vp-primary-blue);
+    }
+
+    /* Aktif Menü Sekmesi */
+    .vp-nav-links li a.active {
+      color: var(--vp-primary-blue);
+      font-weight: 700;
+    }
+
+    .vp-nav-links li a.active::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--vp-primary-blue);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Ana Gövde */
+    .main-content {
+      max-width: 1050px;
+      margin: 36px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .page-title-box {
+      margin-bottom: 24px;
+    }
+
+    .page-title-box h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--vp-dark-text);
+      letter-spacing: -0.5px;
+    }
+
+    .page-title-box p {
+      color: var(--vp-gray-text);
+      font-size: 15px;
+      margin-top: 6px;
+    }
+
+    /* Simülatör Kartı */
+    .sim-card {
+      background: var(--vp-card-bg);
+      border: 1px solid var(--vp-border);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+      padding: 24px;
+    }
+
+    /* Dinamik Açıklama Kutusu */
+    .info-box {
+      background: #f0f7ff;
+      border: 1px solid #bae0ff;
+      border-left: 5px solid var(--vp-primary-blue);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      min-height: 85px;
+    }
+
+    .info-box h3 {
+      font-size: 16px;
+      color: var(--vp-primary-blue);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .info-box p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #1e293b;
+    }
+
+    /* Veri Yolu Şeması */
+    .bus-canvas {
+      background: #fdfdfd;
+      border: 1px solid var(--vp-border);
+      border-radius: 10px;
+      padding: 24px 18px;
+    }
+
+    .controller-area {
+      max-width: 320px;
+      margin: 0 auto 20px auto;
+    }
+
+    /* Çift Hat Çizgileri */
+    .bus-line-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .bus-line {
+      height: 18px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .bus-line.bus-a {
+      background: var(--vp-bus-a);
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    .bus-line.bus-b {
+      background: var(--vp-bus-b);
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+    }
+
+    .bus-line.faulty {
+      background: var(--vp-danger) !important;
+      box-shadow: 0 2px 8px rgba(225, 29, 72, 0.35) !important;
+      text-decoration: line-through;
+    }
+
+    /* Cihaz Kartları */
+    .terminals-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .node-box {
+      background: #ffffff;
+      border: 1.5px solid var(--vp-border);
+      border-radius: 8px;
+      padding: 16px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .node-box:hover {
+      border-color: var(--vp-primary-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .node-box.selected {
+      border-color: var(--vp-primary-blue);
+      background: #f0f7ff;
+    }
+
+    .node-type {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .node-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--vp-dark-text);
+      line-height: 1.2;
+    }
+
+    .node-alias {
+      font-size: 12px;
+      color: var(--vp-primary-blue);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* Buton Grubu */
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 11px 20px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-blue {
+      background-color: var(--vp-primary-blue);
+      color: #ffffff;
+    }
+
+    .btn-blue:hover {
+      background-color: #0045b5;
+    }
+
+    .btn-red {
+      background-color: #fff1f2;
+      color: var(--vp-danger);
+      border: 1px solid #fecdd3;
+    }
+
+    .btn-red:hover {
+      background-color: var(--vp-danger);
+      color: #ffffff;
+    }
+
+    /* Responsive / Mobil Ayarlar */
+    @media (max-width: 900px) {
+      .vp-nav-links {
+        display: none; /* Mobilde taşmayı önlemek için basitleştirildi */
+      }
+      .terminals-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 550px) {
+      .terminals-grid {
+        grid-template-columns: 1fr;
+      }
+      .action-bar {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VoltPitch Header / Navbar -->
+  <header class="vp-header">
+    <div class="vp-nav-container">
+      <a href="#" class="vp-logo">Volt<span>pitch</span></a>
+      <ul class="vp-nav-links">
+        <li><a href="#">Ana Sayfa</a></li>
+        <li><a href="#">Telemetri Merkezi</a></li>
+        <li><a href="#">Uçuş Dinamikleri</a></li>
+        <li><a href="#">Ar-Ge Atölyesi</a></li>
+        <li><a href="#">Dokümantasyon</a></li>
+        <!-- Yeni Eklenen Aviyonik Sekmesi -->
+        <li><a href="#" class="active">Aviyonik Simülatör</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Sayfa İçeriği -->
+  <main class="main-content">
+    <div class="page-title-box">
+      <h1>MIL-STD-1553B Askeri Veri Yolu İnteraktif Laboratuvarı</h1>
+      <p>Savaş jetleri ve helikopterlerin görev omurgasını oluşturan çift hatlı telsiz mimarisini kutucuklara tıklayarak keşfedin.</p>
+    </div>
+
+    <div class="sim-card">
+      <!-- Bilgi Kartı -->
+      <div class="info-box" id="infoBox">
+        <h3 id="infoTitle">İncelemek İstediğiniz Cihaza Tıklayın</h3>
+        <p id="infoText">Aşağıdaki şemada bulunan Bus Controller (Kule), Remote Terminal (Cihazlar) veya renkli veri hatlarına tıklayarak görevinin ne olduğunu sade bir dille öğrenebilirsiniz.</p>
+      </div>
+
+      <!-- Aviyonik Şema -->
+      <div class="bus-canvas">
+        <!-- Bus Controller (Görev Bilgisayarı) -->
+        <div class="controller-area">
+          <div class="node-box selected" onclick="inspectNode('bc')">
+            <div class="node-type">Ana Yönetici (Bus Controller)</div>
+            <div class="node-name">Görev Bilgisayarı</div>
+            <div class="node-alias">"Telsiz Başındaki Kule"</div>
+          </div>
+        </div>
+
+        <!-- Çift Hat (Dual Redundant) -->
+        <div class="bus-line-stack">
+          <div class="bus-line bus-a" id="busALine" onclick="inspectNode('busA')">
+            BUS A (Ana Veri Hattı — 1 Mbps Korumalı Bükümlü Çift)
+          </div>
+          <div class="bus-line bus-b" id="busBLine" onclick="inspectNode('busB')">
+            BUS B (Yedek Veri Hattı — Kesintisiz Devreye Girme Koruması)
+          </div>
+        </div>
+
+        <!-- Terminaller ve Gözlemci -->
+        <div class="terminals-grid">
+          <div class="node-box" onclick="inspectNode('rt1')">
+            <div class="node-type">Terminal 1 (RT 1)</div>
+            <div class="node-name">GPS & INS</div>
+            <div class="node-alias">"Konum & İrtifa Görevlisi"</div>
+          </div>
+
+          <div class="node-box" onclick="inspectNode('rt2')">
+            <div class="node-type">Terminal 2 (RT 2)</div>
+            <div class="node-name">Atış Kontrol Radarı</div>
+            <div class="node-alias">"Hedef Tarama Gözcüsü"</div>
+          </div>
+
+          <div class="node-box" onclick="inspectNode('rt3')">
+            <div class="node-type">Terminal 3 (RT 3)</div>
+            <div class="node-name">Silah Yönetimi (SMS)</div>
+            <div class="node-alias">"Mühimmat Kontrolörü"</div>
+          </div>
+
+          <div class="node-box" onclick="inspectNode('bm')">
+            <div class="node-type">Gözlemci (Bus Monitor)</div>
+            <div class="node-name">Uçuş Kaydedici</div>
+            <div class="node-alias">"Sessiz Kara Kutu"</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aksiyon Kontrolleri -->
+      <div class="action-bar">
+        <button class="btn btn-blue" onclick="runTraffic()">Veri Döngüsünü Çalıştır (Telsiz Konuşması Yap)</button>
+        <button class="btn btn-red" id="faultToggleBtn" onclick="toggleCableFault()">Bus A Kablosunu Kes (Şarapnel Simülasyonu)</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let isBusAFaulty = false;
+
+    const descriptions = {
+      bc: {
+        title: "Bus Controller (BC) — Telsiz Başındaki Kule / Şef",
+        text: "Uçağın ana görev bilgisayarıdır. Bu ağda tam bir askeri hiyerarşi vardır; Kule (BC) isim verip 'sen konuş' demeden hiç kimse kafasına göre kabloya veri basamaz. Çarpışmaları, gürültüyü ve kargaşayı engelleyen tek otorite odur."
+      },
+      busA: {
+        title: "Bus A — Birincil Telsiz Kablosu (Ana Hat)",
+        text: "Tüm cihazların paralel olarak bağlı olduğu korumalı bükümlü çift (twisted pair) kablodur. Uçak motorundan gelen elektromanyetik dalgalardan etkilenmeyecek şekilde zırhlanmıştır. Normal şartlarda tüm veri buradan akar."
+      },
+      busB: {
+        title: "Bus B — Yedek Telsiz Kablosu (Can Simidi)",
+        text: "Uçağa bir mermi isabet ettiğinde veya Bus A koptuğunda sistem duraksamaz. Görev Bilgisayarı (BC) saliseler içinde iletişimi otomatik olarak Bus B'ye kaydırır. Pilot arızayı hissetmeden uçuş devam eder."
+      },
+      rt1: {
+        title: "RT 1 (GPS & Ataletsel Seyrüsefer) — İrtifa & Konum Görevlisi",
+        text: "Uçağın anlık yüksekliğini, yönünü ve hızını hesaplar. Kule 'İrtifayı oku!' (Command Word) emri verdiği an hatta veriyi yazar (Data Word) ve 'Veriyi verdim, sistemim sağlam' (Status Word) raporunu ekler."
+      },
+      rt2: {
+        title: "RT 2 (Atış Kontrol Radarı) — Hedef Tarama Gözcüsü",
+        text: "Düşman uçaklarını ve yer hedeflerini tarar. Hedeflerin mesafesini hafızasında tutar. BC ona sırası geldiğinde konuşma hakkı verdiğinde radar verilerini kokpit ekranına gönderilmek üzere hatta basar."
+      },
+      rt3: {
+        title: "RT 3 (Silah Yönetim Sistemi - SMS) — Mühimmat Kontrolörü",
+        text: "Kanat altındaki bombaların ve füzelerin durumunu bilir. Füze fırlatılacağı zaman kule bu birime 'Arayıcı başlığa hedef koordinatlarını aktar' emrini 1553 protokolü üzerinden iletir."
+      },
+      bm: {
+        title: "Bus Monitor (BM) — Kara Kutu / Sessiz Dinleyici",
+        text: "Hatta bağlıdır fakat mikrofonu yoktur; hatta ASLA tek bir veri kelimesi basamaz. Sadece kule ile diğer birimler arasında ne konuşulduysa harfi harfine dinler ve kaza/bakım analizi için belleğe kaydeder."
+      }
+    };
+
+    function inspectNode(key) {
+      const target = descriptions[key];
+      if (target) {
+        document.getElementById('infoTitle').innerText = target.title;
+        document.getElementById('infoText').innerText = target.text;
+      }
+    }
+
+    function toggleCableFault() {
+      isBusAFaulty = !isBusAFaulty;
+      const lineA = document.getElementById('busALine');
+      const btn = document.getElementById('faultToggleBtn');
+
+      if (isBusAFaulty) {
+        lineA.classList.add('faulty');
+        lineA.innerText = "BUS A (KOPUK / DEVRE DIŞI - VERİ AKIŞI KESİLDİ)";
+        btn.innerText = "Bus A Kablosunu Tamir Et";
+        btn.style.backgroundColor = "#0284c7";
+        btn.style.color = "#ffffff";
+        document.getElementById('infoTitle').innerText = "DİKKAT: Ana Hat (Bus A) Fiziksel Olarak Koptu!";
+        document.getElementById('infoText').innerText = "Fiziksel hasar sonucu Bus A devre dışı kaldı. Ancak sistem kilitlenmedi! Görev Bilgisayarı (BC) veri trafiğini anında yeşil renkli Bus B (Yedek) hattına yönlendirdi. Uçuş emniyeti sıfır kesintiyle korunuyor.";
+      } else {
+        lineA.classList.remove('faulty');
+        lineA.innerText = "BUS A (Ana Veri Hattı — 1 Mbps Korumalı Bükümlü Çift)";
+        btn.innerText = "Bus A Kablosunu Kes (Şarapnel Simülasyonu)";
+        btn.style.backgroundColor = "#fff1f2";
+        btn.style.color = "var(--vp-danger)";
+        document.getElementById('infoTitle').innerText = "Bus A Onarıldı";
+        document.getElementById('infoText').innerText = "Ana hat bağlantısı tekrar sağlandı. Sistem öncelikli olarak birincil hat üzerinden veri aktarımına geri dönebilir.";
+      }
+    }
+
+    function runTraffic() {
+      const currentBus = isBusAFaulty ? "Bus B (Yedek Hat)" : "Bus A (Ana Hat)";
+      document.getElementById('infoTitle').innerText = "Telsiz Çevrimi Başlatıldı [" + currentBus + "]";
+      document.getElementById('infoText').innerText = 
+        "1. ADIM (Komut): Kule (BC), GPS'e (RT 1) 'Bana anlık irtifayı oku!' dedi.\n" +
+        "2. ADIM (Veri): GPS (RT 1), hatta 'İrtifa: 25.000 feet' verisini bastı.\n" +
+        "3. ADIM (Durum): GPS (RT 1), 'Veriyi ilettim, arıza bayrağı sıfır, hazırım' teyidini döndü. Hiçbir veri çakışması olmadan hat döngüsü tamamlandı.";
+    }
+  </script>
+</body>
+</html>
